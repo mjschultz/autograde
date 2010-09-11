@@ -37,23 +37,16 @@
 DIFF_OPTS="-wB"
 
 PROGRAM=$0
-# TODO replace with getopts
-SAVE_OUT=""
-SKIP_REF=""
-SKIP_BUILD=""
-if [[ "$1" == "-n" ]] ; then
-    shift 1
-    SAVE_OUT="save"
-fi
-if [[ "$1" == "-s" ]] ; then
-    shift 1
-    SKIP_REF="skip"
-    SAVE_OUT="save"
-fi
-if [[ "$1" == "-b" ]] ; then
-    shift 1
-    SKIP_BUILD="skip"
-fi
+while getopts "nsb" flag ; do
+    echo $flag $OPTIND $OPTARG
+    case $flag in
+        n) SAVE_OUT="save" ;;
+        s) SKIP_REF="skip" ; SAVE_OUT="save" ;;
+        b) SKIP_BUILD="skip" ;;
+        *) usage "no such argument $flag"
+    esac
+done
+shift $(($OPTIND-1))
 
 if [ $# -lt 1 ] ; then
 	usage "missing arguments"
