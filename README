@@ -1,0 +1,27 @@
+Autograde
+==========
+Autograde looks in a specified directory for:
+ 1) Reference implementation (sub-directory: reference)
+ 2) Example input files (sub-directory: input)
+ 3) Student submissions (sub-directory: submissions)
+ 4) A program that tests the reference/solution (filename: executor)
+
+When first executed, autograde will compile (run `make`) the reference
+implementation.  Once the refernce is completed, it will run over all the
+example input files as follows:
+ ./executor [input-file] > [output-file]
+Where input-file is a file in the input/ sub-directory and will create
+output-file in the output/reference/ sub-directory.
+The "executor" program can be as simple as:
+ #!/bin/bash
+ INPUT=$1
+ ./binary-name < $INPUT
+Allowing multiple binaries to be tested against the same input and allows
+customization to your heart's content.
+
+Once the output directory is filled with the reference implementation's
+("correct") solutions, the script begins running through each
+sub-directory in the submission directory.  Once a submission is built,
+it is executed the same way as the reference implementation and the
+output is compared to the "correct" solution.  The resulting output and
+diff are stored in output/<name>/.
