@@ -157,6 +157,9 @@ for submission in $SUBMISSIONS ; do
     if [ ! -d $submission ] ; then
         submission=$DIR/submissions/`basename $submission`
     fi
+    if [ -f $submission ] ; then
+        continue
+    fi
     if [ ! -d $submission ] ; then
         error "could not find `basename $submission`"
         continue
