@@ -1,0 +1,1 @@
+(defn s[x c](let[r(rem x 10)](if(= x 0)c(recur(int(/ x 10))(+ c(* r r))))))(defn h[x m](cond(= x 1)"happy "(m x)"sad ":else(recur(s x 0)(assoc m x 1))))(defn p[x](if (re-matches #"^1$|^(11+)?\1+"(apply str(repeat x \1)))"non-"""))(println(let [x (Integer/parseInt(nth *command-line-args* 2))](str(h x{})(p x)"prime")))

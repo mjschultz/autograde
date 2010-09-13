@@ -1,0 +1,32 @@
+#!/bin/bash
+INPUT=$1
+# Find executable in dir
+for f in ./* ; do
+    if [ -x $f ] ; then
+        PROGRAM=$f
+        TYPE=${f/*./}
+        if [[ `basename $TYPE` == `basename $PROGRAM` ]] ; then
+            TYPE=""
+        fi
+    fi
+done
+
+case $TYPE in
+    py) I=python ;;
+    pl) I=perl ;;
+    gs) I="ruby1.9 $HOME/Projects/codegolf/lib/golfscript.rb" ;;
+    rb) I="ruby1.9" ;;
+    scala) I=scala-2.8 ; PROGRAM="H" ;;
+    class) I=java ; PROGRAM="H" ;;
+    sed) I="sed -rf" ;;
+    ijs) I=j ;;
+    *) I=$TYPE
+esac
+
+# in some cases we take input from args not stdin
+if [ -f args ] ; then
+    INPUT=`cat $INPUT`
+    $I $PROGRAM "$INPUT"
+else
+    $I $PROGRAM < $INPUT
+fi
