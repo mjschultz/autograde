@@ -1,0 +1,4 @@
+#!/bin/bash
+# The program we want to test is "hello"
+# Our input is given in the $1 shell parameter.
+./hello $1

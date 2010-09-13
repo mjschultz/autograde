@@ -48,21 +48,19 @@ while getopts "nsb" flag ; do
 done
 shift $(($OPTIND-1))
 
-if [ $# -lt 1 ] ; then
-	usage "missing arguments"
-fi
-
-DIR="`pwd`/$1"
-shift 1
-SUBMISSIONS=$@
-
 function error {
 	echo "error: $1" 1>&2
 }
 
 function usage {
-	echo "usage: $PROGRAM [options] <directory>"
-	echo "options are null (for now)"
+    echo "usage: ${PROGRAM} [-nsb] DIR [submission1 ... submissionN]"
+    echo
+    echo "Grade homework assignments in DIR against a reference implementation.  A list of"
+    echo "submissions after DIR tests only those submissions instead of all submissions"
+    echo "giving an implicit -n."
+    echo -e "\t-n don't obliterate old output files"
+    echo -e "\t-s skip running reference implementation [implies -n, output must exist]"
+    echo -e "\t-b skip building submissions from source"
 	if [ -n "$1" ] ; then
 		echo
         error "$1"
@@ -111,22 +109,32 @@ function diffit
         input=`basename $input`
         LEFT="$DIR/output/reference/$input"
         RIGHT="$DIR/output/$NAME/$input"
-        echo $input >> $DIR/output/$NAME.diff
+        echo "Test: $input" >> $DIR/output/$NAME.diff
         diff $DIFF_OPTS "$LEFT" "$RIGHT" >> $DIR/output/$NAME.diff 2>&1
     done
 }
+
+if [ $# -lt 1 ] ; then
+	usage "missing arguments"
+fi
+
+DIR="`pwd`/$1"
+shift 1
+SUBMISSIONS=$@
 
 # Make sure the correct structure is in place
 if [ ! -d $DIR ] ; then
 	usage "'$DIR' does not exist"
 elif [ ! -d $DIR/reference ] ; then
-	usage "reference sub-directory does not exist"
+	usage "reference directory does not exist"
 elif [ ! -d $DIR/input ] ; then
-	usage "input sub-directory does not exist"
+	usage "input directory does not exist"
+elif [ $(ls -U $DIR/input | wc -l) -lt 1 ] ; then
+    usage "input directory has no input files"
 elif [ ! -d $DIR/submissions ] ; then
-	usage "submissions sub-directory does not exist"
-elif [ ! -f $DIR/executor ] ; then
-	echo "executor program does not exist"
+	usage "submissions directory does not exist"
+elif [ ! -x $DIR/executor ] ; then
+	usage "executor program does not exist or is not executable"
 fi
 
 # Set up submissions to look through
